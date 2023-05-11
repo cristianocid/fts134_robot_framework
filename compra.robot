@@ -2,10 +2,10 @@
 *** Settings ***
 Documentation    Fluxo de compra no site Blazedemo
 
-Library         SeleniumLibrary
+Library          SeleniumLibrary
 
-#Test Setup      Iniciar
-Test Teardown   Encerrar
+#Test Setup       open browser   ${url}  ${browser}
+Test Teardown    Encerrar
 
 *** Variables ***
 ${url}      https://www.blazedemo.com
@@ -15,7 +15,6 @@ ${browser}  Chrome
 *** Test Cases ***
 Compra de Passagem
     [Tags]    SMOKE
-    #Iniciar
     Dado que acesso o site Blazedemo
     Quando seleciono a origem como "São Paolo" e destino como "New York"
     E clico no botao Find Flights
@@ -26,15 +25,14 @@ Compra de Passagem
     E marco a opcao Remember Me
     E clico no botao Purchase Flight
     Entao exibe a mensagem "Thank you for your purchase today!"
-    Entao exibe o preco da passagem como "555 USD"
-    Encerrar
+    E exibe o preco da passagem como "555 USD"
 
 *** Keywords ***
 Dado que acesso o site Blazedemo
-    open browser    ${url}      ${browser}
-    wait until element is visible   xpath = //h1                                            5000ms
-    wait until element contains     xpath = //h1      Welcome to the Simple Travel Agency   5000ms
-    wait for condition              return document.title == "BlazeDemo"                    5000ms
+    open browser   ${url}   ${browser}
+    wait until element is visible   xpath = //h1                                          30000ms
+    wait until element contains     xpath = //h1   Welcome to the Simple Travel Agency!    30000ms
+    wait for condition              return document.title == "BlazeDemo"        30000ms
 
 Quando seleciono a origem como "${origem}" e destino como "${destino}"
     set test variable   ${origem}
@@ -46,8 +44,7 @@ E clico no botao Find Flights
     click button    class = btn.btn-primary
 
 Entao exibe o titulo informando a origem e o destino
-    #wait until element contains     xpath = //h3    Flights from ${origem} to ${destino}:     5000ms
-    element should contain          xpath = //h3    Flights from ${origem} to ${destino}:     5000ms
+    element should contain  xpath = //h3    Flights from ${origem} to ${destino}:
 
 Quando seleciono o primeiro voo
     click button    class = btn.btn-small
@@ -56,7 +53,7 @@ E preencho o nome "${nome}"
     input text      id = inputName      ${nome}
 
 E seleciono a bandeira "${bandeira}"
-    select from list by label   id = cardType    ${bandeira}
+    select from list by label   id = cardType       ${bandeira}
 
 E marco a opcao Remember Me
     click element   id = rememberMe
@@ -66,9 +63,9 @@ E clico no botao Purchase Flight
 
 Entao exibe a mensagem "${mensagem}"
     wait until element is visible   xpath = //h1
-    element should contain          xpath = //h1    ${mensagem}
+    element should contain          xpath = //h1      ${mensagem}
 
-Entao exibe o preco da passagem como "${preco}"
+E exibe o preco da passagem como "${preco}"
     element should contain          css = tr:nth-child(3) > td:nth-child(2)     ${preco}
 
 Encerrar

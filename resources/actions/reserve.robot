@@ -1,12 +1,18 @@
 *** Settings ***
-Documentation   Mapeamento das acoes da pagina reserve.php
+Documentation    Suite description
+Library          SeleniumLibrary
 
 *** Keywords ***
-Selecionar primeiro Voo
-    click button                class = btn.btn-small
+Selecionar o primeiro voo da lista
+    wait until element is enabled   class = btn.btn-small   5
+    click button                    class = btn.btn-small
 
-Selecionar o voo numero "${num}"
-    click button                css = tr:nth-child(${num}) .btn
+Selecionar o voo numero
+    [Arguments]    ${num}
+    ${selector}    Set Variable    xpath=//table[@class='table']//tbody//tr[${num}]//input
+    wait until element is enabled    ${selector}    5
+    click element    ${selector}
 
-Conferir o destino da semana
-    click link                  link = destination of the week!
+Validar o titulo de origem e destino
+    [Arguments] ${origem}   ${destino}
+    element should contain  xpath = //h3    Flights from ${origem} to ${destino}:
